@@ -1,0 +1,170 @@
+-- Author:		<Mosaheb>
+-- Create date: <1400/10/25>
+-- Description:	<Insert Final Record into tblPayments>
+-- =============================================
+
+ALTER procedure [dbo].[sp_FetchSalaryRegno]
+as
+begin
+	-- ===============================================
+	--<Insert Year and Month of the Payrol>---
+	declare @payrol_YYMM varchar(4)
+	set @payrol_YYMM='0008'
+	-- ===============================================
+	--<Insert Type of Payroll><"01=Salary","02=Wages">
+	declare @system_code varchar(2)
+	set @system_code='02'
+	-- ===============================================
+	declare @regno  varchar(50)
+	declare @companycode varchar(1)
+	declare @mgcode varchar(2)
+	declare @pyrlcmpcode varchar(3)
+	declare @nationalno varchar(10)
+	declare @name nvarchar(30)
+	declare @fname nvarchar(30)
+	declare @father_name nvarchar(30)
+	declare @id_no nvarchar(50)
+	declare @sex_code varchar(1)
+	declare @birth_date varchar(10)
+	declare @cat_code nvarchar(4)
+	declare @total nvarchar(max)
+	-- ===============================================
+	declare @6626 nvarchar(max)
+	declare @6352 nvarchar(max)
+	declare @5184 nvarchar(max)
+	declare @6373 nvarchar(max)
+	declare @6356 nvarchar(max)
+	declare @5185 nvarchar(max)
+	declare @6357 nvarchar(max)
+	declare @6358 nvarchar(max)
+	declare @6369 nvarchar(max)
+	declare @6359 nvarchar(max)
+	declare @6362 nvarchar(max)
+	declare @6363 nvarchar(max)
+	declare @5181 nvarchar(max)
+	declare @6299 nvarchar(max)
+	declare @6178 nvarchar(max)
+	declare @6177 nvarchar(max)
+	declare @6364 nvarchar(max)
+	declare @6365 nvarchar(max)
+	declare @6353 nvarchar(max)
+	declare @5192 nvarchar(max)
+	declare @6366 nvarchar(max)
+	declare @6262 nvarchar(max)
+	declare @6367 nvarchar(max)
+	declare @6207 nvarchar(max)
+	declare @6206 nvarchar(max)
+	declare @6372 nvarchar(max)
+	declare @6368 nvarchar(max)
+	declare @5207 nvarchar(max)
+	declare @KI_NetSalary nvarchar(max)
+
+	declare cr_FetchRegno cursor
+		for select distinct [Reg_No]
+			from [prtdb].[dbo].[Wages]
+			where Payrol_YYMM=@payrol_YYMM and Reg_No=' 817173'
+	open cr_FetchRegno
+		fetch next from cr_FetchRegno into @regno
+		while (@@FETCH_STATUS=0)
+		begin
+			-- =====================Fecth Personal Information of fetched @regno from [Personl-All]========================
+			declare cr_FetchPersonalInfo cursor
+				for select distinct [company_code],[mg_code],[pyrlcmp_code],[national_no],[name],[fname],[father_name],[id_no],[sex_code],[birth_date]
+					from [prtdb].[dbo].[Personl-All]
+					where [Reg_No]=@regno
+			open cr_FetchPersonalInfo
+				fetch next from cr_FetchPersonalInfo into @companycode,@mgcode,@pyrlcmpcode,@nationalno,@name,@fname,@father_name,@id_no,@sex_code,@birth_date
+
+				-- =====================Find PND in [Salary]========================
+				set @6626='0';set @6352='0';set @5184='0';set @6373='0';set @6356='0';set @5185='0';set @6357='0';set @6358='0';set @6369='0';set @6359='0';set @6362='0';set @6363='0';set @5181='0';set @6299='0';
+				set @6178='0';set @6177='0';set @6364='0';set @6365='0';set @6353='0';set @5192='0';set @6366='0';set @6262='0';set @6367='0';set @6207='0';set @6206='0';set @6372='0';set @6368='0';set @5207='0';
+				set @KI_NetSalary='0';
+				declare cr_PNDResult cursor
+					for select b.category_Code,sum(CAST(a.Credit as bigint)-CAST(a.Debit as bigint)) as total
+						from [prtdb].[dbo].[Wages] a left join [prtdb].[dbo].[PND-Main] b
+						on a.PND=b.PND_Code
+						Where a.Payrol_YYMM=@payrol_YYMM and a.Reg_No=@regno and b.PND_Status='1' and b.System_Code=@system_code
+						group by b.Category_Code
+				open cr_PNDResult
+					fetch next from cr_PNDResult into @cat_code,@total
+					while (@@FETCH_STATUS=0)
+					begin
+						if @cat_code='6626'
+							set @6626=@total
+						if @cat_code='6352'
+							set @6352=@total
+						if @cat_code='5184'
+							set @5184=@total
+						if @cat_code='6373'
+							set @6373=@total
+						if @cat_code='6356'
+							set @6356=@total
+						if @cat_code='5185'
+							set @5185=@total
+						if @cat_code='6357'
+							set @6357=@total
+						if @cat_code='6358'
+							set @6358=@total
+						if @cat_code='6369'
+							set @6369=@total
+						if @cat_code='6359'
+							set @6359=@total
+						if @cat_code='6362'
+							set @6362=@total
+						if @cat_code='6363'
+							set @6363=@total
+						if @cat_code='5181'
+							set @5181=@total
+						if @cat_code='6299'
+							set @6299=@total
+						if @cat_code='6178'
+							set @6178=@total
+						if @cat_code='6177'
+							set @6177=@total
+						if @cat_code='6364'
+							set @6364=@total
+						if @cat_code='6365'
+							set @6365=@total
+						if @cat_code='6353'
+							set @6353=@total
+						if @cat_code='5192'
+							set @5192=@total
+						if @cat_code='6366'
+							set @6366=@total
+						if @cat_code='6262'
+							set @6262=@total
+						if @cat_code='6367'
+							set @6367=@total
+						if @cat_code='6207'
+							set @6207=@total*(-1)
+						if @cat_code='6206'
+							set @6206=@total*(-1)
+						if @cat_code='6372'
+							set @6372=@total*(-1)
+						if @cat_code='6368'
+							set @6368=@total*(-1)
+						if @cat_code='5207'
+							set @5207=@total*(-1)
+					fetch next from cr_PNDResult into @cat_code,@total
+					end
+
+			-- =========================Insert Results into [tblPayments]======================================
+			--set @KI_NetSalary=(@6626+@6352+@5184+@6373+@6356+@5185+@6357+@6358+@6369+@6359+@6362+@6363+@5181+@6299+@6178+@6177+@6364+@6365+@6353+@5192+@6366+@6262+@6367)-(@6207+@6206+@6372+@6368+@5207)
+
+			insert into [prtdb].[dbo].[tblPayments] ([SALARY_YYMM],[REG_NO],[COMPANY_CODE],[MG_CODE],[PYRLCMP_CODE],[NATIONAL_NO],[NAME],[FNAME],[FATHER_NAME],[ID_NO],
+			[SEX_CODE],[BIRTH_DATE],[POST_LEVEL],[GRADE],[6626],[6352],[5184],[6373],[6356],[5185],[6357],[6358],[6369],[6359],[6362],[6363],[5181],[6299],[6178],
+			[6177],[6364],[6365],[6353],[5192],[6366],[6262],[6367],[6207],[6206],[6372],[6368],[5207])
+			VALUES ('0008',@regno,@companycode,@mgcode,@pyrlcmpcode,@nationalno,@name,@fname,@father_name,@id_no,@sex_code,@birth_date,'255','255',
+			@6626,@6352,@5184,@6373,@6356,@5185,@6357,@6358,@6369,@6359,@6362,@6363,@5181,@6299,@6178,
+			@6177,@6364,@6365,@6353,@5192,@6366,@6262,@6367,@6207,@6206,@6372,@6368,@5207)
+			fetch next from cr_FetchRegno into @regno
+			
+			close cr_PNDResult
+			deallocate cr_PNDResult
+
+			close cr_FetchPersonalInfo
+			deallocate cr_FetchPersonalInfo
+		end
+	close cr_FetchRegno
+	deallocate cr_FetchRegno
+end
