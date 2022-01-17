@@ -62,7 +62,7 @@ begin
 	declare cr_FetchRegno cursor
 		for select distinct [Reg_No]
 			from [prtdb].[dbo].[Wages]
-			where Payrol_YYMM=@payrol_YYMM and Reg_No=' 817173'
+			where Payrol_YYMM=@payrol_YYMM
 	open cr_FetchRegno
 		fetch next from cr_FetchRegno into @regno
 		while (@@FETCH_STATUS=0)
